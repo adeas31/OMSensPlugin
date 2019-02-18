@@ -37,12 +37,13 @@
 #include <QWidget>
 #include <QIcon>
 #include "../../OMEdit/OMEdit/OMEditGUI/Interfaces/InformationInterface.h"
+#include "../../OMEdit/OMEdit/OMEditGUI/Interfaces/ModelInterface.h"
 
-class Widget : public QWidget, public InformationInterface
+class Widget : public QWidget, public InformationInterface, public ModelInterface
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "org.openmodelica.OMEdit.plugins.OMSensPlugin")
-  Q_INTERFACES(InformationInterface)
+  Q_INTERFACES(InformationInterface ModelInterface)
 
 public:
   Widget(QWidget *parent = 0);
@@ -52,6 +53,10 @@ public:
 public:
   QString name() override;
   QIcon icon() override;
+
+  // ModelInterface interface
+public:
+  void analyzeModel(const Model &model) override;
 };
 
 #endif // WIDGET_H

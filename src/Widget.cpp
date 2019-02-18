@@ -33,6 +33,10 @@
 
 #include "Widget.h"
 
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QTreeWidget>
+
 Widget::Widget(QWidget *parent)
   : QWidget(parent)
 {
@@ -51,4 +55,35 @@ QString Widget::name()
 QIcon Widget::icon()
 {
   return QIcon(":/omedit.png");
+}
+
+void Widget::analyzeModel(const Model &model)
+{
+  QLabel *pNameLabel = new QLabel(model.mModelName);
+  QLabel *pFilePathLabel = new QLabel(model.mFilePath);
+
+  QTreeWidget *pTree = new QTreeWidget;
+  pTree->setHeaderHidden(true);
+
+  foreach (ComponentInformation componentInformation, model.mComponents) {
+    QTreeWidgetItem *pItem = new QTreeWidgetItem(QStringList() << componentInformation.mName);
+
+    pItem->addChild(new QTreeWidgetItem(QStringList() << QString("Classname : %1").arg(componentInformation.mClassName)));
+    pItem->addChild(new QTreeWidgetItem(QStringList() << QString("Comment : %1").arg(componentInformation.mComment)));
+    pItem->addChild(new QTreeWidgetItem(QStringList() << QString("Scope : %1").arg(componentInformation.mIsProtected ? "Protected" : "Public")));
+    pItem->addChild(new QTreeWidgetItem(QStringList() << QString("Variability : %1").arg(componentInformation.mVariability)));
+    pItem->addChild(new QTreeWidgetItem(QStringList() << QString("Casuality : %1").arg(componentInformation.mCasuality)));
+    pItem->addChild(new QTreeWidgetItem(QStringList() << QString("Value : %1").arg(componentInformation.mParameterValue)));
+
+    pTree->addTopLevelItem(pItem);
+  }
+
+  QVBoxLayout *pLayout = new QVBoxLayout;
+  pLayout->addWidget(pNameLabel);
+  pLayout->addWidget(pFilePathLabel);
+  pLayout->addWidget(new QLabel("List of model components"));
+  pLayout->addWidget(pTree);
+  setLayout(pLayout);
+
+  show();
 }
